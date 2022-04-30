@@ -1,0 +1,15 @@
+@import "~bootstrap/scss/bootstrap";
+
+.bg-pink {
+  background-color: $pink-300;
+}
+
+.App {
+  background-color: $gray-400;
+
+  header nav {
+    @include gradient-x($pink-300, $indigo-200);
+  }
+
+}
+
