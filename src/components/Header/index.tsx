@@ -34,7 +34,7 @@ const Header = () => {
                 </DropdownMenu>
               </UncontrolledDropdown>
             </Nav>
-            <NavbarText>
+            <NavbarText className="me-4">
               User Info
             </NavbarText>
           </Collapse>

@@ -1,9 +1,9 @@
 import React from 'react';
-
+import GW2Logo from '../../assets/logos/Guild_Wars_2_logo.svg';
 const Home = () => {
   return (
-      <div>
-        This is home
+      <div className="text-center">
+        <img src={GW2Logo} alt="Guild Wars 2 Logo" />
       </div>
   );
 };

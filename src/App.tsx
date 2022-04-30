@@ -11,10 +11,10 @@ function App() {
   return (
       <BrowserRouter>
         <div className="App">
-          <Header/>
+          <Header />
           <main>
             <div className="row">
-              <div className="mx-auto col-10 bg-danger">
+              <div className="mx-auto col-10">
                 <Routes>
                   <Route path="/" element={<Home/>}/>
                   <Route path="items" element={<Items/>}/>
