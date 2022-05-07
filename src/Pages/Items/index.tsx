@@ -1,19 +1,18 @@
-import {faChessPawn as chessPawn} from '@fortawesome/free-regular-svg-icons';
-import {
-  faArrowLeft,
-  faBackwardStep,
-  faChessBishop,
-  faChessKing,
-  faChessPawn,
-  faChessQueen,
-} from '@fortawesome/free-solid-svg-icons';
+import {faChessBishop, faChessKing, faChessPawn, faChessQueen} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Table from 'Components/Table';
-import React from 'react';
-import {Pagination, PaginationItem, PaginationLink} from 'reactstrap';
+import useFetchData from 'Hooks/useFetchData';
+import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import './styles.scss';
 
-const arrData = [
+type TempData = {
+  name: string,
+  type: string,
+  level: number,
+  icon: ReactElement
+}
+
+const arrData: Array<TempData> = [
   {name: 'Some Armor', type: 'Armor', level: 10, icon: <FontAwesomeIcon icon={faChessQueen}/>},
   {name: 'Some Weapon', type: 'Weapon', level: 12, icon: <FontAwesomeIcon icon={faChessKing}/>},
   {name: 'Some Trinket', type: 'Trinket', level: 20, icon: <FontAwesomeIcon icon={faChessPawn}/>},
@@ -27,7 +26,48 @@ const arrColumns: Array<any> = [
   {Header: 'Icon', accessor: 'icon', disableSortBy: true},
 ];
 
+type FetchDataProps = {
+  pageSize: number,
+  pageIndex: number
+}
+
 const Items = () => {
+
+  const tPageSize = 1;
+
+  const [data, setData] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
+  const fetchIdRef = useRef(0);
+
+  const [pageSize, setPageSize] = useState(50);
+  const [pageIndex, setPageIndex] = useState(0);
+
+  const {data: apiData, loading: apiLoading}= useFetchData({endpoint: 'items'});
+
+  const fetchData = useCallback(({pageSize, pageIndex}: FetchDataProps) => {
+    setPageSize(pageSize);
+    setPageIndex(pageIndex);
+
+    setLoading(apiLoading);
+    setData(apiData);
+    //
+    // const fetchId = ++fetchIdRef.current;
+    // console.log('Fetch: %d Ref: %d S: %d I:%d', fetchId, fetchIdRef.current, pageSize, pageIndex);
+    // setTimeout(() => {
+    //   if (fetchId === fetchIdRef.current) {
+    //     const startRow = pageIndex * tPageSize;
+    //     const endRow = startRow + tPageSize;
+    //
+    //     setData(arrData.slice(startRow, endRow));
+    //
+    //     setPageCount(Math.ceil(arrData.length / tPageSize));
+    //
+    //     // setLoading(false);
+    //   }
+    // }, 1000);
+
+  }, []);
 
   return (
       <div className="shadow border-1 rounded" id="ItemsMain">
@@ -45,67 +85,8 @@ const Items = () => {
         </section>
 
         <section id="ItemsDisplay" className="mb-3 p-2">
-
-          <Table columns={arrColumns} data={arrData}/>
-
-          <table className="table table-hover table-striped table-success">
-            <thead>
-            <tr>
-              <th>Name</th>
-              <th>Icon</th>
-              <th>Type</th>
-              <th>Level</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>Some Armor</td>
-              <td><FontAwesomeIcon icon={faChessQueen}/></td>
-              <td>Armor</td>
-              <td>10</td>
-            </tr>
-            <tr>
-              <td>Some Weapon</td>
-              <td><FontAwesomeIcon icon={faChessKing}/></td>
-              <td>Weapon</td>
-              <td>10</td>
-            </tr>
-            <tr>
-              <td>Some Trinket</td>
-              <td><FontAwesomeIcon icon={faChessPawn}/></td>
-              <td>Trinket</td>
-              <td>10</td>
-            </tr>
-            <tr>
-              <td>Some Gizmo</td>
-              <td><FontAwesomeIcon icon={chessPawn}/></td>
-              <td>Gizmo</td>
-              <td>10</td>
-            </tr>
-            </tbody>
-          </table>
-        </section>
-        <section id="ItemsControls">
-          <div className="row row-cols-2 justify-content-end">
-            <div className="col">
-              <select className="form-select" aria-label="Number of records per search page">
-                <option value="25" selected>25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="200">200</option>
-              </select>
-            </div>
-            <div className="col">
-              <Pagination aria-label="Search results pages">
-                <PaginationItem><PaginationLink first tag="button"><FontAwesomeIcon icon={faBackwardStep}
-                                                                                    fixedWidth/></PaginationLink></PaginationItem>
-                <PaginationItem><PaginationLink previous tag="button"><FontAwesomeIcon icon={faArrowLeft}
-                                                                                       fixedWidth/></PaginationLink></PaginationItem>
-                <PaginationItem><PaginationLink next tag="button"/></PaginationItem>
-                <PaginationItem><PaginationLink last tag="button"/></PaginationItem>
-              </Pagination>
-            </div>
-          </div>
+          <Table columns={arrColumns} data={data} fetchData={fetchData} loading={loading} pageCount={pageCount}
+                 totalRecords={arrData.length}/>
         </section>
       </div>
   );
