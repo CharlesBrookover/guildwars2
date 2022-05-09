@@ -13,17 +13,18 @@
 //   console.log(xheaders);
 // });
 
-import useFetchData from 'Hooks/useFetchData';
 import React from 'react';
+import useFetchSingle from 'src/Hooks/useFetchSingle';
+
 const fetchTest = () => {
 
-  const {data, loading} = useFetchData({endpoint: 'items'});
+  const {data, loading} = useFetchSingle({endpoint: 'items'});
 
   return <div>
     <div>{loading && 'Loading'}</div>
     <div>{data}</div>
-  </div>
-}
+  </div>;
+};
 
 const out = fetchTest();
 console.log(out);
