@@ -1,7 +1,7 @@
 import {faChessBishop, faChessKing, faChessPawn, faChessQueen} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Table from 'Components/Table';
-import useFetchData from 'Hooks/useFetchData';
+import useFetchSingle from 'Hooks/useFetchSingle';
 import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import './styles.scss';
 
@@ -43,7 +43,7 @@ const Items = () => {
   const [pageSize, setPageSize] = useState(50);
   const [pageIndex, setPageIndex] = useState(0);
 
-  const {data: apiData, loading: apiLoading}= useFetchData({endpoint: 'items'});
+  const {data: apiData, loading: apiLoading} = useFetchSingle({endpoint: 'items'});
 
   const fetchData = useCallback(({pageSize, pageIndex}: FetchDataProps) => {
     setPageSize(pageSize);
