@@ -49,7 +49,7 @@ const Table = (props: TableProps) => {
 
   useEffect(() => {
     props.fetchData({pageIndex, pageSize});
-  }, [pageIndex, pageSize]);
+  }, [props.fetchData, pageIndex, pageSize]);
 
   return (
       <>

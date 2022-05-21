@@ -1,31 +1,38 @@
-import {useEffect, useState} from 'react';
-import {httpGet} from 'Services/httpCalls';
-import {FetchData, FetchDataSingleProps} from 'Types/FetchData';
+import {useEffect} from 'react';
+import {FetchData, FetchSingleProps} from 'Types/FetchData';
+import useApiData from "../useApiData";
+import {defaultAxiosConfig} from "../../Utils/defaults";
+import {AxiosRequestConfig} from "axios";
 
-function useFetchSingle<Type extends {}>({
-  endpoint,
-  id, config,
-}: FetchDataSingleProps): FetchData<Type> {
-  const [data, setData] = useState<Type>();
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    let _alive = true;
-    setLoading(true);
+const useFetchSingle = ({endpoint, id, auth}: FetchSingleProps): FetchData<object> => {
 
-    httpGet(endpoint, {
-      ...config,
-      ...{param: id},
-    })
-        .then(response => {
-          _alive && setData(response.data);
-        })
-        .catch(error => console.log(error))
-        .finally(() => setLoading(false));
-    return () => { _alive = false;};
-  }, []);
-  // }, [endpoint, id]);
-  return {data, loading};
-};
+    const {data, loading, error, message, setEndpoint, setConfig} = useApiData();
+
+    useEffect(() => {
+        let _alive = true;
+
+        if (_alive) {
+            setEndpoint(endpoint);
+            setConfig(() => {
+                const singleConfig: AxiosRequestConfig = {};
+                if (auth) {
+                    singleConfig['headers'] = {Authorization: 'Bearer ' + auth}
+                }
+                if (id) {
+                    singleConfig['params'] = {id};
+                }
+
+                return {...defaultAxiosConfig, ...singleConfig}
+            });
+        }
+
+        return () => {
+            _alive = false
+        }
+    }, [endpoint, id, auth]);
+
+    return {data, loading, error, message};
+}
 
 export default useFetchSingle;
